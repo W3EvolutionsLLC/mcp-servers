@@ -2,7 +2,7 @@ import click
 from pathlib import Path
 import logging
 import sys
-from .server import serve
+from .server_new import serve
 
 @click.command()
 @click.option("--repository", "-r", type=Path, help="Git repository path")

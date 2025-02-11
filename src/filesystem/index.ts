@@ -105,7 +105,7 @@ const ReadMultipleFilesArgsSchema = z.object({
 
 const WriteFileArgsSchema = z.object({
   path: z.string(),
-  content: z.string(),
+  content: z.string()
 });
 
 const EditOperation = z.object({
@@ -144,6 +144,11 @@ const SearchFilesArgsSchema = z.object({
 
 const GetFileInfoArgsSchema = z.object({
   path: z.string(),
+});
+
+const AppendFileArgsSchema = z.object({
+  path: z.string(),
+  content: z.string(),
 });
 
 const ToolInputSchema = ToolSchema.shape.inputSchema;
@@ -435,6 +440,11 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: [],
         },
       },
+      {
+        name: "append_file",
+        description: "Appends a string to a file",
+        inputSchema: zodToJsonSchema(AppendFileArgsSchema) as ToolInput,
+      }
     ],
   };
 });
@@ -618,6 +628,18 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             type: "text",
             text: `Allowed directories:\n${allowedDirectories.join('\n')}`
           }],
+        };
+      }
+
+      case "append_file": {
+        const parsed = AppendFileArgsSchema.safeParse(args);
+        if (!parsed.success) {
+          throw new Error(`Invalid arguments for append_file: ${parsed.error}`);
+        }
+        const validPath = await validatePath(parsed.data.path);
+        await fs.appendFile(validPath, parsed.data.content, "utf-8");
+        return {
+          content: [{ type: "text", text: `Successfully appended to ${parsed.data.path}` }],
         };
       }
 
