@@ -104,35 +104,6 @@ class GitTools(str, Enum):
     REMOTE_ADD = "git_remote_add"
     MERGE = "git_merge"
     INIT = "git_init"
-
-def git_init(path: str) -> str:
-    """
-    Initialize a new Git repository at the specified path.
-    
-    Args:
-        path (str): Path where the repository should be initialized
-        
-    Returns:
-        str: A message indicating the result of the initialization
-    """
-    try:
-        # Convert path to Path object and resolve it
-        repo_path = Path(path).resolve()
-        
-        # Use GitPython's init with proper parameters
-        repo = git.Repo.init(
-            path=repo_path,
-            mkdir=True,  # Create directory if it doesn't exist
-            expand_vars=False  # More secure default
-        )
-        
-        if repo and repo.git_dir:
-            return (f"Initialized empty Git repository in {repo.git_dir}")
-        else:
-            raise ValueError("Repository initialization failed to create git directory")
-            
-    except Exception as e:
-        return f"Failed to initialize repository: {str(e)}"
     
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
