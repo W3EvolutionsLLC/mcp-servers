@@ -104,7 +104,7 @@ class GitTools(str, Enum):
     REMOTE_ADD = "git_remote_add"
     MERGE = "git_merge"
     INIT = "git_init"
-    
+
 def git_status(repo: git.Repo) -> str:
     return repo.git.status()
 
